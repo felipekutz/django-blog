@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 5
   web:
-    build: 
+    build:
       context: ./
       dockerfile: Docker/Dockerfile
     command: sh Docker/boot.sh

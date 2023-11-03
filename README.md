@@ -6,6 +6,6 @@ It's a very simple blog created to test some libs which works with django and pr
 - obs: notice that we use boot.sh that runs migrations right after web container is up.
 
 ## TODO:
- - [] Improve blog's design 
+ - [] Improve blog's design
  - [] create tests for views
  - [] copy search bar to homepage
