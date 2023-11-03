@@ -1,8 +1,7 @@
 from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Post
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, TrigramSimilarity
+from django.contrib.postgres.search import TrigramSimilarity
 
 from django.views.generic import ListView, DetailView
 from django.views import View
@@ -61,7 +60,7 @@ class PostShareView(DetailView):
         if form.is_valid():
             cd = form.cleaned_data
             post_url = request.build_absolute_uri(post.get_absolute_url())
-            subject = f"{cd['name']} recoomend you read {post.title}"
+            subject = f"{cd['name']} recommend you read {post.title}"
             message = f"Read {post.title} at {post_url}\n \n {cd['name']}'s comments: {cd['comments']}"
             send_mail(subject, message, 'admin@theblogemail.com', [cd['to']])
         return render(request=request, template_name=self.template_name,  context={'form': form, 'post': post, 'sent':True})
@@ -80,9 +79,5 @@ def post_search(request):
         form = SearchForm(request.GET)
         if form.is_valid():
             query = form.cleaned_data['query']
-            search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
-            search_query = SearchQuery(query)
-            # results = Post.published.annotate(search=search_vector, rank=SearchRank(search_vector, 
-            #                                                                         search_query)).filter(rank__gte=0.3).order_by('-rank')
             results = Post.published.annotate(similarity=TrigramSimilarity('title', query), ).filter(similarity__gt=0.1).order_by('-similarity')
     return render(request, 'blog/post/search.html', {'form':form, 'query':query, 'results':results})
