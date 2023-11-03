@@ -13,6 +13,7 @@ markdown = "^3.4.4"
 python-decouple = "^3.8"
 psycopg2-binary = "^2.9.9"
 model-bakery = "^1.17.0"
+pre-commit = "^3.5.0"
 
 
 [build-system]
